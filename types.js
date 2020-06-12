@@ -1,7 +1,7 @@
 class Token {
     /**
      * @param {Number} id
-     * @param {'Root' | 'Admin' | 'User'} permission
+     * @param {'Admin' | 'User'} permission
      * @param {String} token
      * @param {Number} userid
      */

@@ -4,11 +4,11 @@ const { UnauthorizedError, ForbiddenError } = require('./errors');
 
 class Client {
     /**
-     * Client to interface with the SpamWatch API.
+     * Client to interface with the SpamBlockers API.
      * @param {String} token The Authorization Token
-     * @param {String} [host='https://api.spamwat.ch'] The API host. Defaults to the official API.
+     * @param {String} [host='https://api.spamblockers.bot'] The API host. Defaults to the official API.
      */
-    constructor(token, host = 'https://api.spamwat.ch') {
+    constructor(token, host = 'https://api.spamblockers.bot') {
         this._host = host;
         this._instance = axios.create({
             validateStatus(status) {
@@ -40,7 +40,7 @@ class Client {
                 return response;
 
             case 401:
-                throw new UnauthorizedError('Make sure your token is correct');
+                throw new UnauthorizedError('Is your token valid? If yes, make sure you correctly entered your API key.');
 
             case 403:
                 throw new ForbiddenError(this._token);
@@ -61,7 +61,7 @@ class Client {
      * Requires Root permission
      * @returns {Token[]}
      */
-    async getTokens() {
+    async getUserApiTokens() {
         const { data } = await this._makeRequest('tokens');
         return data.map(
             token =>
@@ -76,7 +76,7 @@ class Client {
      * @param {'Root' | 'Admin' | 'User'} permission The permission level the Token should have
      * @returns {Token|null} The created tokern
      */
-    async createToken(userid, permission) {
+    async generateApiToken(userid, permission) {
         const { status, data } = await this._makeRequest('tokens', 'post', {
             data: {
                 id: userid,
@@ -125,7 +125,7 @@ class Client {
      * @param {Number} userid ID of the user
      * @returns {Ban|Boolean} Ban object or null
      */
-    async getBan(userid) {
+    async queryBanStatus(userid) {
         const { status, data } = await this._makeRequest(`banlist/${userid}`);
 
         if (status === 404) {
@@ -137,27 +137,28 @@ class Client {
 
     /**
      * Get a list of all bans
-     * Requires Admin Permission
+     * Requires Sudo Permission configured on server-side.
+     * When used in SpamWatch API servers, an token with root rights is needed.
      * @returns {Ban[]} A list of bans
      */
-    async getBans() {
+    async exportAllBans() {
         const { data } = await this._makeRequest('banlist');
         return data.map(ban => new Ban(ban.id, ban.reason, ban.date));
     }
 
     /**
-     * Remove a ban
+     * Remove a user's ban
      */
-    async deleteBan(userid) {
+    async removeGban(userid) {
         await this._makeRequest(`banlist/${userid}`, 'delete');
     }
 
     /**
-     * Adds a ban
+     * Adds a user to the banlist
      * @param {Number} userid ID of the banned user
      * @param {String} reason Reason why the user was banned
      */
-    async addBan(userid, reason) {
+    async addNewGban(userid, reason) {
         await this._makeRequest('banlist', 'post', {
             data: [
                 {
@@ -169,10 +170,10 @@ class Client {
     }
 
     /**
-     * Add a list of Bans
+     * Batch gban some users.
      * @param {Ban[]} data List of Ban objects
      */
-    async addBans(data) {
+    async batchGban(data) {
         await this._makeRequest('banlist', 'post', {
             data: data.map(d => ({
                 id: d.id,
