@@ -61,7 +61,7 @@ class Client {
      * Requires Root permission
      * @returns {Token[]}
      */
-    async getUserApiTokens() {
+    async getAllApiTokens() {
         const { data } = await this._makeRequest('tokens');
         return data.map(
             token =>
@@ -132,7 +132,7 @@ class Client {
             return false;
         }
 
-        return new Ban(data.id, data.reason, data.date);
+        return new Ban(data.ok, data.description, data.userId, data.banned_by, data.reason, data.date);
     }
 
     /**
