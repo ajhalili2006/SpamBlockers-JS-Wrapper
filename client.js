@@ -95,7 +95,7 @@ class Client {
      * Gets the Token that the request was made with.
      * @returns {Token}
      */
-    async getSelf() {
+    async pullSelfMeta() {
         const { data } = await this._makeRequest('tokens/self');
         return new Token(data.id, data.permission, data.token, data.userid);
     }
@@ -106,7 +106,7 @@ class Client {
      * @param {Number} tokenid The token ID
      * @returns {Token} The token
      */
-    async getToken(tokenid) {
+    async getApiTokenMetadata(tokenid) {
         const { data } = await this._makeRequest(`tokens/${tokenid}`);
         console.log(data);
         return new Token(data.id, data.permission, data.token, data.userid);
@@ -116,12 +116,12 @@ class Client {
      * Delete the token using its ID
      * @param tokenid The ID of the token
      */
-    async deleteToken(tokenid) {
+    async revokeApiToken(tokenid) {
         await this._makeRequest(`tokens/${tokenid}`, 'delete');
     }
 
     /**
-     * Get a ban
+     * Query a user's ban reason.
      * @param {Number} userid ID of the user
      * @returns {Ban|Boolean} Ban object or null
      */
@@ -137,7 +137,7 @@ class Client {
 
     /**
      * Get a list of all bans
-     * Requires Sudo Permission configured on server-side.
+     * Requires Root user rights.
      * When used in SpamWatch API servers, an token with root rights is needed.
      * @returns {Ban[]} A list of bans
      */
@@ -147,14 +147,15 @@ class Client {
     }
 
     /**
-     * Remove a user's ban
+     * Unban a user.
      */
     async removeGban(userid) {
         await this._makeRequest(`banlist/${userid}`, 'delete');
     }
 
     /**
-     * Adds a user to the banlist
+     * Bans a user to the blacklist.
+     * If banned but a different reason was given, it should also update it on DB side.
      * @param {Number} userid ID of the banned user
      * @param {String} reason Reason why the user was banned
      */
@@ -170,7 +171,7 @@ class Client {
     }
 
     /**
-     * Batch gban some users.
+     * Batch ban some users.
      * @param {Ban[]} data List of Ban objects
      */
     async batchGban(data) {
