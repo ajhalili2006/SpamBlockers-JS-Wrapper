@@ -14,8 +14,12 @@ class Client {
             validateStatus(status) {
                 return status < 500;
             },
+            headers: {
+                // This header will make SpamWatch API blocks you from using the API
+                // and we're working on backward-compartibility.
+                'X-SPAMBLOCKERS-API-TOKEN': `${token}`
+            },
         });
-        this._instance.defaults.headers.common.Authorization = `Bearer ${token}`;
         this._token = token;
     }
 
@@ -141,7 +145,6 @@ class Client {
     /**
      * Get a list of all bans
      * Requires Root user rights.
-     * When used in SpamWatch API servers, an token with root rights is needed.
      * @returns {Ban[]} A list of bans
      */
     async exportAllBans() {
@@ -174,6 +177,10 @@ class Client {
         });
     }
 
+    /**
+     * Pull only banned user IDs from the API.
+     * @returns {Number[]}
+     */
     async pullBannedUserids() {
         const { data } = await this._makeRequest('banlist/all');
 
