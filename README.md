@@ -5,15 +5,21 @@ the [SpamWatch API JavaScript Wrapper](https://github.com/SpamWatch/spamwatch-js
 
 ## Changelog
 
+For full changelog, see the `CHANGELOG.md` file on the GitLab repo.
+
+### Latest version - v0.3.0
+
+> :warning: **THIS UPDATE WILL MAKE THIS WRAPPER
+INCOMPARTIBLE WITH SPAMWATCH API.** We're working on some ways to make stuff works with SpamWatch API and its wrappers soon. PRs are welcome!
+
+* Pulled 3 commits from the upstream repository's `v0.3.1` codebase. That's means we need to fix some conflicts on `client.js`.
+* Updated the `package-lock.json` to be same as `package.json` (name and version).
+* New error types, so some customizations are also happened there.
+
 ### v0.2.0
 
 * Updated the README to include changelog, available functions and credits, among other things.
 * Renamed some functions for clarifications.
-
-### v0.1.0
-
-* Initial version of the package, as part of the development of [SpmBlockers API Server](https://gitlab.com/SpamBlockers/API-Server).
-* Forked from [`github:SpamWatch/spamwatch-js`](https://github.com/SpamWatch-spamwatch-js)
 
 ## Installtion
 
@@ -26,18 +32,6 @@ npm i @spamblockers/api --save
 ```
 
 After installation, you can just require and call API requests, like [this one below](#basic-usage).
-
-### With SpamWatch API JS Wrapper
-
-As usual, install it with `npm`.
-
-```sh
-## This will save to your package.json, just in case you publish
-## your source code KEK.
-npm i spamwatch --save
-```
-
-After installation, you can just require and call API requests, like [this one below](#using-spamwatch-js-wrapper).
 
 
 ## Basic Usage
@@ -67,22 +61,6 @@ In this example, when we ran this query, the resulting response will be:
 }
 ```
 
-### Using SpamWatch JS Wrapper
-
-This may be different, because you need to point `host` to SpamBlockers API host.
-
-```js
-const SpamWatch = require('spamwatch');
-const SpamBlockersApi = 'https://api.spamblockers.bot';
-const token = process.env.SPAMBLOCKERS_API_TOKEN;
-const client = new SpamBlockersApi.Client(token, SpamBlockersApi);
-
-(async () => {
-    const ban = await client.queryBanStatus(777000);
-    console.log(ban);
-})();
-```
-
 ## Available Functions
 
 As soon as the SpamWatch API wrapper for JavScript have new functions to use, we'll update our code here. For in a meanwhile,
@@ -91,7 +69,7 @@ As soon as the SpamWatch API wrapper for JavScript have new functions to use, we
 | --- | --- | --- | --- | --- | --- |
 | Blacklist | Pulling the whole banlist | Root | `exportAllBans` | `getBans` | 0.1.0
 | | Querying a user's ban status. | User | `queryBanStatus` | `getBan` | 0.1.0
-| | Getting a list of banned IDs | User | **Unsupported, coming soon** | **Unsupported, coming soon.** | n/a |
+| | Getting a list of banned IDs only | User | `pullBannedUserids` | `getBansMin` | 0.3.0 |
 | | Banning a user thru API | Sudo/Admin | `addNewGban` | `addBan` | 0.1.0
 | | Batch banning users thru API. | Sudo/Admin | `batchGban` | `addBans` | 0.1.0
 | | Unbanning a user thru API | Sudo/Admin | `removeGban` | `deleteBan` | 0.1.0
@@ -107,21 +85,12 @@ As soon as the SpamWatch API wrapper for JavScript have new functions to use, we
 
 For a list of examples for available functions listed above, plese see the `examples` directory of the packge's source code.
 
-## Is this backwards-compartible with SpamWatch API?
+## Is this backwards-compartible with SpamWatch API or its wrapper for Node.js?
 
-Yes, you can call the SpamWatch API using the SpamBlockers API JS Wrapper, but you need to change the host to `https://api.spamwat.ch`, like this:
+**Simple answer**: Currently, no.
 
-```js
-const SpamBlockersApi = require('@spamblockers/api');
-const token = process.env.SPAMBLOCKERS_API_TOKEN;
-const host = "https://api.spmwat.ch";
-const client = new SpamBlockersApi.Client(token);
-
-(async () => {
-    const ban = await client.queryBanStatus(777000);
-    console.log(ban);
-})();
-```
+**Long answer**: Due to customizations happened in our client-side and server-side code, it may take
+years for us to make it backwards-compartibile with SpamWatch API wrappers. If you want to help, feel free to fork and send us a PR when you're done.
 
 ## Credits
 
