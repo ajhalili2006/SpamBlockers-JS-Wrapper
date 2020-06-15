@@ -1,6 +1,6 @@
 {
   "name": "@spamblockers/api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "SpamBlockers API Wrapper, with SpamWatch API backwards-compartibility.",
   "main": "index.js",
   "repository": {
@@ -8,9 +8,7 @@
     "url": "git+https://gitlab.com/SpamBlockers/JS-Wrapper"
   },
   "keywords": [
-    "SpamBlockers",
-    "SpamBlockers API",
-    "SpamWatch"
+    "SpamBlockers"
   ],
   "author": "Andrei Jiroh Halili <andreijiroh@mdebythepins.tk>",
   "license": "MIT",

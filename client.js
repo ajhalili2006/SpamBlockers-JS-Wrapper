@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { Ban, Token } = require('./types');
-const { UnauthorizedError, ForbiddenError } = require('./errors');
+const { UnauthorizedError, ForbiddenError, TooManyRequestsError } = require('./errors');
 
 class Client {
     /**
@@ -40,10 +40,13 @@ class Client {
                 return response;
 
             case 401:
-                throw new UnauthorizedError('Is your token valid? If yes, make sure you correctly entered your API key.');
+                throw new UnauthorizedError(response, 'Is your token valid? If yes, make sure you correctly entered your API key.');
 
             case 403:
-                throw new ForbiddenError(this._token);
+                throw new ForbiddenError(response, this._token);
+
+            case 429:
+                throw new TooManyRequestsError(response);
         }
     }
 
@@ -165,9 +168,20 @@ class Client {
                 {
                     id: userid,
                     reason,
+                    message,
                 },
             ],
         });
+    }
+
+    async pullBannedUserids() {
+        const { data } = await this._makeRequest('banlist/all');
+
+        if (!data) {
+            return [];
+        }
+
+        return data.split('\n').map(uid => Number(uid));
     }
 
     /**
@@ -181,6 +195,11 @@ class Client {
                 reason: d.reason,
             })),
         });
+    }
+
+    async stats() {
+        const { data } = await this._makeRequest('stats');
+        return data;
     }
 }
 
