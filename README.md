@@ -10,11 +10,11 @@ For full changelog, see the `CHANGELOG.md` file on the GitLab repo.
 ### Latest version - v0.3.0
 
 > :warning: **THIS UPDATE WILL MAKE THIS WRAPPER
-INCOMPARTIBLE WITH SPAMWATCH API.** We're working on some ways to make stuff works with SpamWatch API and its wrappers soon. PRs are welcome!
+INCOMPATIBLE WITH SPAMWATCH API.** We're working on some ways to make stuff works with SpamWatch API and its wrappers soon. PRs are welcome!
 
 * Pulled 3 commits from the upstream repository's `v0.3.1` codebase. That's means we need to fix some conflicts on `client.js`.
-* Updated the `package-lock.json` to be same as `package.json` (name and version).
-* New error types, so some customizations are also happened there.
+* Updated the `package-lock.json` to be the same as `package.json` (name and version).
+* New error types, so some customizations also happen there.
 
 ### v0.2.0
 
