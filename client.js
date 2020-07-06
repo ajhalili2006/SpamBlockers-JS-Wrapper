@@ -13,13 +13,10 @@ class Client {
         this._instance = axios.create({
             validateStatus(status) {
                 return status < 500;
-            },
-            headers: {
-                // This header will make SpamWatch API blocks you from using the API
-                // and we're working on backward-compartibility.
-                'X-SPAMBLOCKERS-API-TOKEN': `${token}`
-            },
+            }
         });
+        // We're now going back to what SpamWatch JS Wrapper is using.
+        this._instance.defaults.headers.common.Authorization = `Bearer ${token}`;
         this._token = token;
     }
 
@@ -68,12 +65,9 @@ class Client {
      * Requires Root permission
      * @returns {Token[]}
      */
-    async getAllApiTokens() {
+    async getTAllApiTokens() {
         const { data } = await this._makeRequest('users');
-        return data.map(
-            token =>
-                new Token(token.id, token.permission, token.token, token.userid)
-        );
+        return data.map(token => new Token(token.id, token.permission, token.token, token.userid));
     }
 
     /**
@@ -139,7 +133,7 @@ class Client {
             return false;
         }
 
-        return new Ban(data.ok, data.result);
+        return new Ban(data.id, data.reason, data.admin, data.date, data.message);
     }
 
     /**
@@ -149,7 +143,7 @@ class Client {
      */
     async exportAllBans() {
         const { data } = await this._makeRequest('bans');
-        return data.map(ban => new Ban(ban.id, ban.reason, ban.date));
+        return data.map(ban => new Ban(ban.id, ban.reason, ban.admin, ban.date, ban.message));
     }
 
     /**
