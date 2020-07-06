@@ -6,9 +6,9 @@ class Client {
     /**
      * Client to interface with the SpamBlockers API.
      * @param {String} token The Authorization Token
-     * @param {String} [host='https://api.spamblockers.bot'] The API host. Defaults to the official API.
+     * @param {String} [host='https://spamblockers.lungers.com/api/v1'] The API host. Defaults to the official API.
      */
-    constructor(token, host = 'https://api.spamblockers.bot') {
+    constructor(token, host = 'https://spamblockers.lungers.com/api/v1') {
         this._host = host;
         this._instance = axios.create({
             validateStatus(status) {
@@ -69,7 +69,7 @@ class Client {
      * @returns {Token[]}
      */
     async getAllApiTokens() {
-        const { data } = await this._makeRequest('tokens');
+        const { data } = await this._makeRequest('users');
         return data.map(
             token =>
                 new Token(token.id, token.permission, token.token, token.userid)
@@ -78,13 +78,13 @@ class Client {
 
     /**
      * Creates a token with the given parameters
-     * Requires Root permission
+     * Requires Admin permission
      * @param {Number} userid The Telegram User ID of the token owner
-     * @param {'Root' | 'Admin' | 'User'} permission The permission level the Token should have
+     * @param { 'Admin' | 'User'} permission The permission level the Token should have
      * @returns {Token|null} The created tokern
      */
     async generateApiToken(userid, permission) {
-        const { status, data } = await this._makeRequest('tokens', 'post', {
+        const { status, data } = await this._makeRequest('users', 'post', {
             data: {
                 id: userid,
                 permission,
@@ -133,13 +133,13 @@ class Client {
      * @returns {Ban|Boolean} Ban object or null
      */
     async queryBanStatus(userid) {
-        const { status, data } = await this._makeRequest(`banlist/${userid}`);
+        const { status, data } = await this._makeRequest(`bans/${userid}`);
 
         if (status === 404) {
             return false;
         }
 
-        return new Ban(data.ok, data.description, data.userId, data.banned_by, data.reason, data.date);
+        return new Ban(data.ok, data.result);
     }
 
     /**
@@ -148,7 +148,7 @@ class Client {
      * @returns {Ban[]} A list of bans
      */
     async exportAllBans() {
-        const { data } = await this._makeRequest('banlist');
+        const { data } = await this._makeRequest('bans');
         return data.map(ban => new Ban(ban.id, ban.reason, ban.date));
     }
 
