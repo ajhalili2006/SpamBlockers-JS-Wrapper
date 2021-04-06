@@ -19,7 +19,7 @@
   },
   "homepage": "https://gitlab.com/SpamBlockers/JS-Wrapper#readme",
   "dependencies": {
-    "axios": "^0.19.0"
+    "axios": "^0.21.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
